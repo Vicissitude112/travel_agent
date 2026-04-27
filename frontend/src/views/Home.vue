@@ -2,8 +2,8 @@
   <div class="home-page">
     <section class="planner-header">
       <div>
-        <p class="eyebrow">LangGraph Travel Agent</p>
-        <h1>智能旅行规划工作台</h1>
+        <p class="eyebrow">LangGraph Multi-Agent Travel System</p>
+        <h1>基于 LangGraph 多智能体协作的 AI 旅行规划系统</h1>
         <p class="subtitle">输入目的地、日期和偏好，生成包含景点、酒店、天气、图片和地图的结构化行程。</p>
       </div>
       <a-space>

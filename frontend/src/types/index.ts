@@ -33,6 +33,7 @@ export interface Meal {
   location?: Location | null
   description?: string | null
   estimated_cost?: number
+  source?: string
 }
 
 export interface Hotel {
@@ -105,6 +106,7 @@ export interface TripPlan {
   start_date: string
   end_date: string
   days: DayPlan[]
+  hotels?: Hotel[]
   weather_info: WeatherInfo[]
   overall_suggestions: string
   budget?: Budget | null

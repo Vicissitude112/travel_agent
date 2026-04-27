@@ -69,4 +69,15 @@ export async function healthCheck(): Promise<any> {
   })
 }
 
+export function getApiBaseUrl() {
+  return API_BASE_URL
+}
+
+export function proxiedImageUrl(url?: string | null) {
+  if (!url) return ''
+  if (url.startsWith('data:') || url.startsWith('blob:')) return url
+  if (url.startsWith(API_BASE_URL)) return url
+  return `${API_BASE_URL}/api/poi/image-proxy?url=${encodeURIComponent(url)}`
+}
+
 export default apiClient

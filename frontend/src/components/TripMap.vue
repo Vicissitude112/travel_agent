@@ -1,10 +1,10 @@
 <template>
   <div class="trip-map">
-    <div v-if="!apiKey" class="map-empty">
-      <div class="map-empty-title">地图暂不可用</div>
-      <div class="map-empty-subtitle">请在前端环境变量中配置 VITE_AMAP_WEB_JS_KEY</div>
+    <div v-if="!apiKey || !mapCenter" class="map-empty">
+      <div class="map-empty-title">{{ apiKey ? '暂无地图点位' : '地图暂不可用' }}</div>
+      <div class="map-empty-subtitle">{{ apiKey ? '目的地坐标解析失败，暂无法渲染地图。' : '请在前端环境变量中配置 VITE_AMAP_WEB_JS_KEY' }}</div>
     </div>
-    <div v-show="apiKey" ref="containerRef" class="map-container"></div>
+    <div v-show="apiKey && mapCenter" ref="containerRef" class="map-container"></div>
   </div>
 </template>
 
@@ -60,8 +60,24 @@ const markerData = computed<MapMarker[]>(() => {
       })
     }
   })
+  props.plan.hotels?.forEach((hotel, index) => {
+    if (!hotel.location) return
+    fallback.push({
+      id: `hotel-${index + 1}`,
+      marker_type: 'hotel',
+      name: hotel.name,
+      address: hotel.address,
+      location: hotel.location,
+      day_index: null,
+      order: index + 1,
+      rating: hotel.rating,
+      image_url: hotel.image_url || hotel.image?.url,
+      description: hotel.recommendation_reason
+    })
+  })
   return fallback
 })
+const mapCenter = computed(() => props.plan?.map_data?.center || markerData.value[0]?.location || null)
 
 onMounted(async () => {
   await initMap()
@@ -80,7 +96,7 @@ watch(
 )
 
 async function initMap() {
-  if (!apiKey || !containerRef.value) return
+  if (!apiKey || !containerRef.value || !mapCenter.value) return
   if (securityCode) {
     ;(window as any)._AMapSecurityConfig = { securityJsCode: securityCode }
   }
@@ -92,10 +108,9 @@ async function initMap() {
     plugins: ['AMap.Marker', 'AMap.InfoWindow', 'AMap.Scale', 'AMap.ToolBar']
   })
 
-  const center = props.plan?.map_data?.center
   map = new amap.Map(containerRef.value, {
     zoom: 11,
-    center: center ? [center.longitude, center.latitude] : [116.4074, 39.9042],
+    center: [mapCenter.value.longitude, mapCenter.value.latitude],
     viewMode: '2D',
     resizeEnable: true
   })

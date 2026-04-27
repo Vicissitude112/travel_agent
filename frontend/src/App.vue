@@ -3,7 +3,7 @@
     <a-layout-header class="app-header">
       <div class="brand">
         <span class="brand-mark">TA</span>
-        <span>LangGraph 智能旅行助手</span>
+        <span>基于 LangGraph 多智能体协作的 AI 旅行规划系统</span>
       </div>
     </a-layout-header>
     <a-layout-content>
