@@ -1,0 +1,25 @@
+# FastAPI 和相关依赖
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+
+# LangChain / LangGraph
+langchain-core>=0.3.0
+langchain-openai>=0.2.0
+langgraph>=0.2.0
+
+# HTTP 客户端
+httpx>=0.27.0
+
+# 环境变量管理
+python-dotenv>=1.0.0
+
+# CORS / 表单上传支持
+python-multipart>=0.0.9
+
+# 日志
+loguru>=0.7.0
+
+# 日期处理
+python-dateutil>=2.8.2
