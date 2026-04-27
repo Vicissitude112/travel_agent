@@ -24,7 +24,7 @@ def setup_logging() -> None:
         colorize=True,
         backtrace=settings.debug,
         diagnose=settings.debug,
-        format="<green>{time:YYYY-MM-DD HH:mm:ss.SSS}</green> | <level>{level}</level> | {message}",
+        format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level}</level> | {name}:{function}:{line} | {message}",
     )
     logger.add(
         log_file,

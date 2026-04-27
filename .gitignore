@@ -38,6 +38,7 @@ env/
 
 # 日志
 *.log
+logs/
 
 # 测试
 .pytest_cache/
@@ -47,4 +48,7 @@ htmlcov/
 # 操作系统
 .DS_Store
 Thumbs.db
+
+# 其他
+note.md
 
