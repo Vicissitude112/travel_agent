@@ -31,6 +31,7 @@ const markerData = computed<MapMarker[]>(() => {
   if (!props.plan) return []
 
   const fallback: MapMarker[] = []
+  let attractionOrder = 1
   props.plan.days.forEach(day => {
     day.attractions.forEach((attraction, index) => {
       fallback.push({
@@ -40,11 +41,12 @@ const markerData = computed<MapMarker[]>(() => {
         address: attraction.address,
         location: attraction.location,
         day_index: day.day_index,
-        order: index + 1,
+        order: attractionOrder,
         rating: attraction.rating,
         image_url: attraction.image_url || attraction.image?.url,
         description: attraction.description
       })
+      attractionOrder += 1
     })
     if (day.hotel?.location) {
       fallback.push({

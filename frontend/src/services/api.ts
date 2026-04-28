@@ -73,11 +73,11 @@ export function getApiBaseUrl() {
   return API_BASE_URL
 }
 
-export function proxiedImageUrl(url?: string | null) {
+export function proxiedImageUrl(url?: string | null, folder = 'default') {
   if (!url) return ''
   if (url.startsWith('data:') || url.startsWith('blob:')) return url
   if (url.startsWith(API_BASE_URL)) return url
-  return `${API_BASE_URL}/api/poi/image-proxy?url=${encodeURIComponent(url)}`
+  return `${API_BASE_URL}/api/poi/image-proxy?url=${encodeURIComponent(url)}&folder=${encodeURIComponent(folder)}`
 }
 
 export default apiClient

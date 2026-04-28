@@ -40,6 +40,9 @@ env/
 *.log
 logs/
 
+# 导出图片临时缓存
+backend/image_temp/
+
 # 测试
 .pytest_cache/
 .coverage

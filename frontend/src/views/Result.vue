@@ -78,7 +78,7 @@
         </nav>
 
         <div id="trip-plan-content" class="export-layout">
-          <section class="content-column">
+          <section id="trip-export-content" class="content-column">
             <a-card id="budget-summary" class="summary-card" :bordered="false">
               <div class="summary-grid">
                 <div>
@@ -165,7 +165,7 @@
                         decoding="sync"
                         @error="handleImageError"
                       />
-                      <span class="place-order">{{ attrIdx + 1 }}</span>
+                      <span class="place-order">{{ globalAttractionOrder(dayIdx, attrIdx) }}</span>
                       <span v-if="attraction.ticket_price" class="ticket">¥{{ attraction.ticket_price }}</span>
                     </div>
                     <div class="place-body">
@@ -487,6 +487,14 @@ function scrollToSection(id: string) {
   activeSection.value = id
 }
 
+function globalAttractionOrder(dayIndex: number, attrIndex: number) {
+  if (!tripPlan.value) return attrIndex + 1
+  const previousCount = tripPlan.value.days
+    .slice(0, dayIndex)
+    .reduce((sum, day) => sum + day.attractions.length, 0)
+  return previousCount + attrIndex + 1
+}
+
 function exportAsJson() {
   if (!tripPlan.value) return
   const payload = {
@@ -500,7 +508,7 @@ function exportAsJson() {
 
 async function exportAsImage() {
   if (!tripPlan.value) return
-  const element = document.getElementById('trip-plan-content')
+  const element = document.getElementById('trip-export-content')
   if (!element) return
   let restoreImages = () => {}
   try {
@@ -522,7 +530,7 @@ async function exportAsImage() {
 
 async function exportAsPDF() {
   if (!tripPlan.value) return
-  const element = document.getElementById('trip-plan-content')
+  const element = document.getElementById('trip-export-content')
   if (!element) return
   let restoreImages = () => {}
   try {
@@ -600,7 +608,7 @@ function waitForImage(img: HTMLImageElement) {
 async function toExportableImage(rawUrl: string, label: string) {
   if (!rawUrl || rawUrl.startsWith('data:')) return rawUrl || placeholderDataUri(label)
   try {
-    const response = await fetch(proxiedImageUrl(rawUrl), { cache: 'force-cache' })
+    const response = await fetch(proxiedImageUrl(rawUrl, exportFolderName()), { cache: 'force-cache' })
     if (!response.ok) throw new Error(`图片代理返回 ${response.status}`)
     const blob = await response.blob()
     if (!blob.type.startsWith('image/')) throw new Error('代理结果不是图片')
@@ -609,6 +617,11 @@ async function toExportableImage(rawUrl: string, label: string) {
     console.warn('导出图片转换失败，使用占位图：', rawUrl, error)
     return placeholderDataUri(label)
   }
+}
+
+function exportFolderName() {
+  if (!tripPlan.value) return 'default'
+  return `${tripPlan.value.city}-${tripPlan.value.start_date}-${tripPlan.value.end_date}`
 }
 
 function blobToDataUrl(blob: Blob) {
@@ -1067,6 +1080,11 @@ async function handleImportFile(event: Event) {
 
 :global(.exporting-trip .export-layout) {
   grid-template-columns: 1fr !important;
+}
+
+:global(.exporting-trip #trip-export-content) {
+  width: 1120px !important;
+  max-width: none !important;
 }
 
 @media (max-width: 1280px) {
