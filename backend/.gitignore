@@ -39,6 +39,9 @@ env/
 # 日志
 *.log
 
+# PNG/PDF 导出时按需缓存第三方图片
+image_temp/
+
 # 测试
 .pytest_cache/
 .coverage

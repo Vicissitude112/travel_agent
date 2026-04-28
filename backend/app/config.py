@@ -29,7 +29,7 @@ class Settings(BaseSettings):
         extra="ignore",
     )
 
-    app_name: str = "LangGraph智能旅行助手"
+    app_name: str = "基于 LangGraph 多智能体协作的 AI 旅行规划系统"
     app_version: str = "1.0.0"
     debug: bool = Field(default=False, validation_alias="APP_DEBUG")
     reload: bool = Field(default=True, validation_alias="APP_RELOAD")
@@ -61,7 +61,7 @@ class Settings(BaseSettings):
     amap_timeout_seconds: float = 10.0
     image_timeout_seconds: float = 8.0
     llm_timeout_seconds: float = Field(
-        default=90.0,
+        default=60.0,
         validation_alias=AliasChoices("LLM_TIMEOUT_SECONDS", "LLM_TIMEOUT"),
     )
 

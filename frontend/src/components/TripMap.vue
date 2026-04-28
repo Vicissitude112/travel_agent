@@ -27,7 +27,9 @@ let markers: any[] = []
 let infoWindow: any = null
 
 const markerData = computed<MapMarker[]>(() => {
-  if (props.plan?.map_data?.markers?.length) return props.plan.map_data.markers
+  if (props.plan?.map_data?.markers?.length) {
+    return normalizeMarkerOrders(props.plan.map_data.markers)
+  }
   if (!props.plan) return []
 
   const fallback: MapMarker[] = []
@@ -80,6 +82,25 @@ const markerData = computed<MapMarker[]>(() => {
   return fallback
 })
 const mapCenter = computed(() => props.plan?.map_data?.center || markerData.value[0]?.location || null)
+
+function normalizeMarkerOrders(source: MapMarker[]) {
+  const attractionMarkers = source
+    .filter(item => item.marker_type === 'attraction')
+    .sort((left, right) => {
+      const leftDay = left.day_index ?? 0
+      const rightDay = right.day_index ?? 0
+      if (leftDay !== rightDay) return leftDay - rightDay
+      return (left.order ?? 0) - (right.order ?? 0)
+    })
+  const orderById = new Map<string, number>()
+  attractionMarkers.forEach((item, index) => {
+    orderById.set(item.id, index + 1)
+  })
+  return source.map(item => {
+    if (item.marker_type !== 'attraction') return item
+    return { ...item, order: orderById.get(item.id) || item.order }
+  })
+}
 
 onMounted(async () => {
   await initMap()

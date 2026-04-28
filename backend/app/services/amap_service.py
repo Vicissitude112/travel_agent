@@ -126,6 +126,30 @@ class AmapService:
         logger.info("高德POI搜索完成 city={} keywords={} count={}", city, keywords, len(pois))
         return pois
 
+    def search_poi_around(
+        self,
+        keywords: str,
+        location: Location,
+        radius: int = 5000,
+        page_size: int = 12,
+    ) -> List[POIInfo]:
+        """围绕动态坐标搜索 POI，适合景区、区县、路线等非标准城市输入。"""
+        data = self._get(
+            "/v3/place/around",
+            {
+                "keywords": keywords,
+                "location": f"{location.longitude},{location.latitude}",
+                "radius": radius,
+                "offset": page_size,
+                "page": 1,
+                "sortrule": "distance",
+                "extensions": "all",
+            },
+        )
+        pois = self._parse_pois(data.get("pois") or [])
+        logger.info("高德周边POI搜索完成 keywords={} count={}", keywords, len(pois))
+        return pois
+
     def search_attractions(self, city: str, preferences: List[str], limit: int = 12) -> List[POIInfo]:
         keywords = preferences or ["景点"]
         merged: Dict[str, POIInfo] = {}
@@ -140,12 +164,59 @@ class AmapService:
                 break
         return list(merged.values())[:limit]
 
+    def search_attractions_nearby(self, location: Location, preferences: List[str], limit: int = 12) -> List[POIInfo]:
+        keywords = preferences or ["景点"]
+        merged: Dict[str, POIInfo] = {}
+        for keyword in keywords:
+            query = keyword if any(word in keyword for word in ("景点", "公园", "博物馆", "古镇")) else f"{keyword} 景点"
+            for poi in self.search_poi_around(query, location, radius=12000, page_size=limit):
+                key = poi.id or f"{poi.name}:{poi.address}"
+                merged.setdefault(key, poi)
+                if len(merged) >= limit:
+                    break
+            if len(merged) >= limit:
+                break
+        if len(merged) < limit:
+            for poi in self.search_poi_around("景点", location, radius=12000, page_size=limit):
+                key = poi.id or f"{poi.name}:{poi.address}"
+                merged.setdefault(key, poi)
+                if len(merged) >= limit:
+                    break
+        return list(merged.values())[:limit]
+
     def search_hotels(self, city: str, accommodation: str, limit: int = 8) -> List[POIInfo]:
-        keywords = f"{accommodation or ''} 酒店".strip()
-        pois = self.search_poi(keywords, city, page_size=limit)
-        if not pois:
-            pois = self.search_poi("酒店", city, page_size=limit)
-        return pois[:limit]
+        merged: Dict[str, POIInfo] = {}
+        keywords = [f"{accommodation or ''} 酒店".strip(), "酒店", "宾馆"]
+        for keyword in keywords:
+            for poi in self.search_poi(keyword, city, page_size=limit):
+                key = poi.id or f"{poi.name}:{poi.address}"
+                merged.setdefault(key, poi)
+                if len(merged) >= limit:
+                    break
+            if len(merged) >= limit:
+                break
+        return list(merged.values())[:limit]
+
+    def search_hotels_nearby(
+        self,
+        location: Location,
+        accommodation: str,
+        limit: int = 8,
+    ) -> List[POIInfo]:
+        merged: Dict[str, POIInfo] = {}
+        keywords = [f"{accommodation or ''} 酒店".strip(), "酒店", "宾馆"]
+        for keyword in keywords:
+            for poi in self.search_poi_around(keyword, location, radius=7000, page_size=limit):
+                key = poi.id or f"{poi.name}:{poi.address}"
+                merged.setdefault(key, poi)
+                if len(merged) >= limit:
+                    break
+            if len(merged) >= limit:
+                break
+        return list(merged.values())[:limit]
+
+    def search_foods_nearby(self, location: Location, keyword: str, limit: int = 6) -> List[POIInfo]:
+        return self.search_poi_around(keyword, location, radius=3500, page_size=limit)
 
     def get_weather(self, city: str) -> List[WeatherInfo]:
         data = self._get(

@@ -82,6 +82,7 @@ class Meal(BaseModel):
     location: Optional[Location] = Field(default=None, description="坐标")
     description: Optional[str] = Field(default=None, description="描述")
     estimated_cost: int = Field(default=0, ge=0, description="预计费用")
+    source: str = Field(default="rule", description="推荐来源，如 amap_poi、llm_fallback")
 
 
 class Hotel(BaseModel):
@@ -171,6 +172,7 @@ class TripPlan(BaseModel):
     start_date: str = Field(..., description="开始日期")
     end_date: str = Field(..., description="结束日期")
     days: List[DayPlan] = Field(default_factory=list, description="每日行程")
+    hotels: List[Hotel] = Field(default_factory=list, description="统一酒店推荐列表")
     weather_info: List[WeatherInfo] = Field(default_factory=list, description="天气信息")
     overall_suggestions: str = Field(default="", description="总体建议")
     budget: Optional[Budget] = Field(default=None, description="预算信息")

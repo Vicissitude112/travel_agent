@@ -15,7 +15,7 @@ settings = get_settings()
 app = FastAPI(
     title=settings.app_name,
     version=settings.app_version,
-    description="基于 LangChain / LangGraph 的智能旅行规划助手 API",
+    description="基于 LangChain / LangGraph 的多智能体协作旅行规划 API",
     docs_url="/docs",
     redoc_url="/redoc",
 )
