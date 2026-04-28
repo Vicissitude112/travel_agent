@@ -2,7 +2,7 @@
 
 ## 项目描述
 
-基于 Vue3 + TypeScript + FastAPI 重构智能旅行规划系统，将教学型 Agent 改造为 LangChain / LangGraph 多智能体协作工作流。  
+基于 Vue3 + TypeScript + FastAPI 重构智能旅行规划系统，采用 LangChain / LangGraph 多智能体协作工作流。  
 系统围绕目的地解析、景点检索、天气、酒店、美食、图片补全、地图数据构建和结果校验进行节点化编排，并通过 Pydantic 统一状态与响应结构。  
 集成高德地图、Unsplash 和兼容 OpenAI 协议的 LLM，支持外部 API 失败降级、历史记录、JSON 导入导出、地图 Marker 展示及长页面 PNG/PDF 导出。  
 针对图片跨域和导出丢图问题实现后端图片代理与前端 dataURL 转换，提升旅行方案展示与分享的稳定性。
@@ -19,11 +19,11 @@
 ## 效果展示
 用户输入目的地和出行天数，交通方式，住宿偏好，旅行偏好等信息。并且支持查看历史记录，导入之前的旅行方案 JSON 文件。
 
-![image](images\home.jpg)
+![image](./images/home.jpg)
 
 系统生成旅行方案，包含每日景点、酒店、美食推荐，并在地图上展示景点位置和行程路线。用户可以导出 PNG 图片或 PDF 文件。
 
-![image](images\result.png)
+![image](./images/result.png)
 
 ## 目录结构
 
